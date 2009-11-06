@@ -1,7 +1,7 @@
 ###############################################################
 # Name:			 MyProperties.py
 # Purpose:	 Project properties dialog
-# Author:		 Luca Allulli (webmaster@roma21.it)
+# Author:		 Luca Allulli (luca@skeed.it)
 # Created:	 2009-08-24
 # Copyright: Luca Allulli (http://www.skeed.it/songpress.html)
 # License:	 GNU GPL v2
