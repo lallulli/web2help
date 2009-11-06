@@ -15,6 +15,7 @@ from Globals import glb
 from MyProperties import *
 from Project import *
 from Grabber import *
+from MyTestBed import *
 import xml.etree.ElementTree as ET
 
 class Web2helpFrame(SDIMainFrame):
@@ -216,6 +217,7 @@ class Web2helpFrame(SDIMainFrame):
 			
 		Bind(self.OnProjectProperties, 'properties')
 		Bind(self.OnCompile, 'compile')
+		Bind(self.OnTestBed, 'testbed')
 
 	def New(self):
 		self.output.ClearAll()	
@@ -262,7 +264,7 @@ class Web2helpFrame(SDIMainFrame):
 				wx.PD_CAN_ABORT | wx.PD_AUTO_HIDE 
 			)
 			h = self.cancelDialog.Show()
-		
+					
 	def OnCompileCompleted(self, evt):
 		self.cancelDialog.Update(self.percentTotal)
 		self.cancelDialog.Destroy()
@@ -288,6 +290,11 @@ class Web2helpFrame(SDIMainFrame):
 		if dest.IsOk():
 			self.MoveSubtree(self.dragItem, dest, append=True)
 			self.SetModified()
+
+	def OnTestBed(self, evt):
+		t = MyTestBed(self.frame)
+		t.ShowModal()
+		evt.Skip()
 
 	def AskOutputFilename(self):
 		"""Ask and updates the filename (without saving); return None if user cancels, the file name ow"""

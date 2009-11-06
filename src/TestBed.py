@@ -14,10 +14,10 @@ from PythonSTC import *
 ## Class TestBed
 ###########################################################################
 
-class TestBed ( wx.Frame ):
+class TestBed ( wx.Dialog ):
 	
 	def __init__( self, parent ):
-		wx.Frame.__init__  ( self, parent, id = wx.ID_ANY, title = u"web2help testbed", pos = wx.DefaultPosition, size = wx.Size( 500,300 ), style = wx.DEFAULT_FRAME_STYLE|wx.TAB_TRAVERSAL )
+		wx.Dialog.__init__  ( self, parent, id = wx.ID_ANY, title = u"web2help testbed", pos = wx.DefaultPosition, size = wx.Size( 433,438 ), style = wx.CAPTION|wx.CLOSE_BOX|wx.DEFAULT_DIALOG_STYLE|wx.MAXIMIZE_BOX|wx.MINIMIZE_BOX|wx.RESIZE_BORDER )
 		
 		self.SetSizeHintsSz( wx.DefaultSize, wx.DefaultSize )
 		
@@ -52,19 +52,19 @@ class TestBed ( wx.Frame ):
 		self.m_panel2.SetSizer( bSizer13 )
 		self.m_panel2.Layout()
 		bSizer13.Fit( self.m_panel2 )
-		self.m_panel3 = wx.Panel( self.m_splitter1, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+		self.pannelloInferiore = wx.Panel( self.m_splitter1, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
 		bSizer14 = wx.BoxSizer( wx.VERTICAL )
 		
 		
-		code = PythonSTC(self)
+		self.code = PythonSTC(self.pannelloInferiore, wx.ID_ANY)
 		bSizer14.Add( self.code, 1, wx.ALL|wx.EXPAND, 5 )
 		
 		bSizer15 = wx.BoxSizer( wx.HORIZONTAL )
 		
-		self.title = wx.RadioButton( self.m_panel3, wx.ID_ANY, u"Title", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.title = wx.RadioButton( self.pannelloInferiore, wx.ID_ANY, u"Title", wx.DefaultPosition, wx.DefaultSize, 0 )
 		bSizer15.Add( self.title, 0, wx.ALL, 5 )
 		
-		self.content = wx.RadioButton( self.m_panel3, wx.ID_ANY, u"Content", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.content = wx.RadioButton( self.pannelloInferiore, wx.ID_ANY, u"Content", wx.DefaultPosition, wx.DefaultSize, 0 )
 		bSizer15.Add( self.content, 0, wx.ALL, 5 )
 		
 		bSizer14.Add( bSizer15, 0, wx.EXPAND, 5 )
@@ -72,19 +72,19 @@ class TestBed ( wx.Frame ):
 		bSizer16 = wx.BoxSizer( wx.HORIZONTAL )
 		
 		m_sdbSizer1 = wx.StdDialogButtonSizer()
-		self.m_sdbSizer1OK = wx.Button( self.m_panel3, wx.ID_OK )
+		self.m_sdbSizer1OK = wx.Button( self.pannelloInferiore, wx.ID_OK )
 		m_sdbSizer1.AddButton( self.m_sdbSizer1OK )
-		self.m_sdbSizer1Cancel = wx.Button( self.m_panel3, wx.ID_CANCEL )
+		self.m_sdbSizer1Cancel = wx.Button( self.pannelloInferiore, wx.ID_CANCEL )
 		m_sdbSizer1.AddButton( self.m_sdbSizer1Cancel )
 		m_sdbSizer1.Realize();
 		bSizer16.Add( m_sdbSizer1, 1, wx.EXPAND, 5 )
 		
 		bSizer14.Add( bSizer16, 0, wx.EXPAND, 5 )
 		
-		self.m_panel3.SetSizer( bSizer14 )
-		self.m_panel3.Layout()
-		bSizer14.Fit( self.m_panel3 )
-		self.m_splitter1.SplitHorizontally( self.m_panel2, self.m_panel3, 0 )
+		self.pannelloInferiore.SetSizer( bSizer14 )
+		self.pannelloInferiore.Layout()
+		bSizer14.Fit( self.pannelloInferiore )
+		self.m_splitter1.SplitHorizontally( self.m_panel2, self.pannelloInferiore, 0 )
 		bSizer8.Add( self.m_splitter1, 1, wx.EXPAND, 5 )
 		
 		self.SetSizer( bSizer8 )
