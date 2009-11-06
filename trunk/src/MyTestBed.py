@@ -7,7 +7,7 @@
 # License:	 GNU GPL v2
 ##############################################################
 
-import TestBed
+from TestBed import *
 
 class MyTestBed(TestBed):
 	def __init__(self, parent):
