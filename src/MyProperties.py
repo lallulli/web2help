@@ -16,7 +16,6 @@ class MyProperties(Properties):
 		
 		self.project = project
 		self.template.SetPath(project.template)
-		self.css.SetPath(project.css)
 		self.title.SetText(project.extractTitle)
 		self.content.SetText(project.extractContent)
 		self.name.SetPath(project.name)	
@@ -24,7 +23,6 @@ class MyProperties(Properties):
 	def OnOk(self, evt):
 		p = self.project
 		p.template = self.template.GetPath()
-		p.css = self.css.GetPath()
 		p.extractTitle = self.title.GetText()
 		p.extractContent = self.content.GetText()
 		p.name = self.name.GetPath()

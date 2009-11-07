@@ -43,11 +43,11 @@
 				<object class="separator" />
 				<object class="wxMenuItem" name="testbed">
 					<label>_Testbed...</label>
-					<help></help>
+					<help>Assist you in telling web2help how to extract useful content from web pages</help>
 				</object>
 				<object class="wxMenuItem" name="keepHtmlWorkshopInputFiles">
 					<label>_Keep HTML Workshop input files</label>
-					<help></help>
+					<help>Don&apos;t remove temporary files; useful for debugging</help>
 					<checkable>1</checkable>
 				</object>
 			</object>

@@ -45,17 +45,6 @@ class Properties ( wx.Dialog ):
 		
 		bSizer1.Add( bSizer2, 0, wx.EXPAND, 5 )
 		
-		bSizer21 = wx.BoxSizer( wx.HORIZONTAL )
-		
-		self.m_staticText11 = wx.StaticText( self, wx.ID_ANY, u"CSS:", wx.DefaultPosition, wx.DefaultSize, 0 )
-		self.m_staticText11.Wrap( -1 )
-		bSizer21.Add( self.m_staticText11, 0, wx.ALL, 5 )
-		
-		self.css = wx.FilePickerCtrl( self, wx.ID_ANY, wx.EmptyString, u"Select a file", u"*.css", wx.DefaultPosition, wx.DefaultSize, wx.FLP_DEFAULT_STYLE )
-		bSizer21.Add( self.css, 1, wx.ALL, 5 )
-		
-		bSizer1.Add( bSizer21, 0, wx.EXPAND, 5 )
-		
 		bSizer211 = wx.BoxSizer( wx.HORIZONTAL )
 		
 		self.m_staticText111 = wx.StaticText( self, wx.ID_ANY, u"Retrieve title:", wx.DefaultPosition, wx.DefaultSize, 0 )
