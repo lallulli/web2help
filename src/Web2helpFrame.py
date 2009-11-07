@@ -17,6 +17,7 @@ from Project import *
 from Grabber import *
 from MyTestBed import *
 import xml.etree.ElementTree as ET
+import subprocess
 
 class Web2helpFrame(SDIMainFrame):
 
@@ -31,7 +32,7 @@ class Web2helpFrame(SDIMainFrame):
 			'w2h',
 			'web2help',
 			glb.AddPath('img/web2help.ico'),
-			"0.9",
+			"1.0",
 			"http://www.skeed.it/web2help.html",
 			"Copyright (c) 2009 Luca Allulli - Skeed",
 			"Licensed under the terms and conditions of the GNU General Public License, version 2",
@@ -219,6 +220,7 @@ class Web2helpFrame(SDIMainFrame):
 		Bind(self.OnProjectProperties, 'properties')
 		Bind(self.OnCompile, 'compile')
 		Bind(self.OnTestBed, 'testbed')
+		Bind(self.OnGuide, 'guide')
 
 	def New(self):
 		self.output.ClearAll()	
@@ -295,6 +297,10 @@ class Web2helpFrame(SDIMainFrame):
 	def OnTestBed(self, evt):
 		t = MyTestBed(self.frame, self.project)
 		t.ShowModal()
+
+	def OnGuide(self, evt):
+		helpfile = os.path.join("help", "web2help.chm")
+		subprocess.Popen("hh " + glb.AddPath(helpfile))		
 
 	def AskOutputFilename(self):
 		"""Ask and updates the filename (without saving); return None if user cancels, the file name ow"""
