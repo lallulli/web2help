@@ -40,6 +40,7 @@ class Web2helpFrame(SDIMainFrame):
 		
 		# Menu
 		self.BindMyMenu()
+		self.keepInputId = xrc.XRCID('keepHtmlWorkshopInputFiles')
 
 		# Splitter creation
 		self.splitter = wx.SplitterWindow(self.frame);
@@ -230,7 +231,7 @@ class Web2helpFrame(SDIMainFrame):
 		t = ET.parse(self.document)
 		root = t.getroot()
 		self.project.Unserialize(root)
-		self.TreeUnserialize(root)		
+		self.TreeUnserialize(root)
 		
 	def Save(self):
 		root = ET.Element('root')
@@ -251,7 +252,7 @@ class Web2helpFrame(SDIMainFrame):
 				self.project.name = n
 		if self.project.name != "":
 			self.output.ClearAll()
-			self.grabber = Grabber(self.tree, self.project, self.frame)
+			self.grabber = Grabber(self.tree, self.project, self.frame, self.menuBar.IsChecked(self.keepInputId))
 			self.grabber.start()
 			self.SetModified()
 			self.percentTotal = self.tree.GetCount()

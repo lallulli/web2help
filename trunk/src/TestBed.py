@@ -24,10 +24,10 @@ class TestBed ( wx.Dialog ):
 		
 		bSizer8 = wx.BoxSizer( wx.VERTICAL )
 		
-		self.m_splitter1 = wx.SplitterWindow( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.SP_3D )
+		self.m_splitter1 = wx.SplitterWindow( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.SP_BORDER )
 		self.m_splitter1.Bind( wx.EVT_IDLE, self.m_splitter1OnIdle )
 		
-		self.pannelloSuperiore = wx.Panel( self.m_splitter1, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+		self.pannelloSuperiore = wx.Panel( self.m_splitter1, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.SUNKEN_BORDER|wx.TAB_TRAVERSAL )
 		bSizer13 = wx.BoxSizer( wx.VERTICAL )
 		
 		bSizer11 = wx.BoxSizer( wx.HORIZONTAL )
@@ -54,7 +54,7 @@ class TestBed ( wx.Dialog ):
 		self.pannelloSuperiore.SetSizer( bSizer13 )
 		self.pannelloSuperiore.Layout()
 		bSizer13.Fit( self.pannelloSuperiore )
-		self.pannelloInferiore = wx.Panel( self.m_splitter1, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+		self.pannelloInferiore = wx.Panel( self.m_splitter1, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.SUNKEN_BORDER|wx.TAB_TRAVERSAL )
 		bSizer14 = wx.BoxSizer( wx.VERTICAL )
 		
 		
@@ -80,7 +80,7 @@ class TestBed ( wx.Dialog ):
 		self.m_sdbSizer1Cancel = wx.Button( self.pannelloInferiore, wx.ID_CANCEL )
 		m_sdbSizer1.AddButton( self.m_sdbSizer1Cancel )
 		m_sdbSizer1.Realize();
-		bSizer16.Add( m_sdbSizer1, 1, wx.EXPAND, 5 )
+		bSizer16.Add( m_sdbSizer1, 1, wx.ALL|wx.BOTTOM|wx.EXPAND|wx.LEFT|wx.RIGHT|wx.TOP, 5 )
 		
 		bSizer14.Add( bSizer16, 0, wx.EXPAND, 5 )
 		
