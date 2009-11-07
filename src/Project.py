@@ -15,11 +15,9 @@ class Project(object):
 	def __init__(self):
 		object.__init__(self)
 		self.template = glb.AddPath('template/template.html')
-		self.css = glb.AddPath('template/template.css')
 		self.name = ""
-		self.extractTitle = """return html.body.find("div", {'id': "main"}).h1.string"""
-		self.extractContent = """h1 = html.body.find("div", {'id': "main"}).h1
-return h1.fetchNextSiblings()"""
+		self.extractTitle = """return html.h1.string"""
+		self.extractContent = """return = html.find('div', {'id': 'main'})"""
 
 	def Serialize(self):
 		e = ET.Element('project')
