@@ -53,6 +53,10 @@
 			</object>
 			<object class="wxMenu">
 				<label>_?</label>
+				<object class="wxMenuItem" name="guide">
+					<label>_Guide\tF1</label>
+					<help>Open web2help help (generated with web2help :-)</help>
+				</object>
 				<object class="wxMenuItem" name="about">
 					<label>_About...</label>
 					<help>Show credits</help>
