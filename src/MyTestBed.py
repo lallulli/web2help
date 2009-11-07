@@ -126,6 +126,12 @@ class MyTestBed(TestBed):
 	def ProduceLoad(self):
 		return self.Load().prettify()
 		
+	def Format(self, e):
+		try:
+			return e.prettify()
+		except:
+			return str(e)
+		
 	def ProduceParse(self):
 		# define extracting methods
 		m = "def extract(html):\n"
@@ -135,7 +141,13 @@ class MyTestBed(TestBed):
 		# load web page
 		soup = self.Load()
 		s = extract(soup)
-		return str(s)	
+		out = ""
+		if type(s) == list or type(s) == BeautifulSoup.ResultSet:
+			for k in s:
+				out += self.Format(k) + "\n"
+		else:
+			out += self.Format(s)
+		return out	
 		
 	def OnLoad(self, evt):
 		delayedresult.startWorker(self.Consume, self.ProduceLoad)

@@ -55,12 +55,13 @@ class Repository(object):
 		return k in self.d
 		
 class Grabber(threading.Thread):
-	def __init__(self, tree, project, owner):
+	def __init__(self, tree, project, owner, keepOutput = False):
 		threading.Thread.__init__(self)
 		self.tree = tree
 		self.project = project
 		self.owner = owner
 		self.stop = False
+		self.keepOutput = keepOutput
 		
 	def Send(self, msg):
 		evt = EventTextMessage(message=msg)
@@ -118,13 +119,12 @@ class Grabber(threading.Thread):
 			raw = s.read()
 			s.close()
 			soup = BeautifulSoup.BeautifulSoup(raw)
-			title = self.extractTitle(soup.html)
+			title = str(self.extractTitle(soup.html))
 			self.tree.SetItemText(k[0], glb.Join(title, u))
 			content = self.extractContent(soup.html)
 			if type(content) != list and type(content) != BeautifulSoup.ResultSet:
 				content = [content]
 			c = "".join([str(x) for x in content])
-			print c
 			next = self.treeList[i + 1][1] if i + 1 < nn else False
 			prev = self.treeList[i - 1][1] if i - 1 >= 0 else False
 			parent = k[2] if k[2] != "" else False
@@ -220,6 +220,11 @@ Contents file=toc.hhc
 		
 	def Compile(self):
 		try:
+		
+			# create temp dir and repository
+			self.dir = tempfile.mkdtemp()
+			self.repo = Repository()
+		
 			self.path, self.name = os.path.split(self.project.name)
 		
 			# define extracting methods
@@ -234,10 +239,6 @@ Contents file=toc.hhc
 				m += "\t" + l + "\n"
 			exec m
 			self.extractContent = extractContent
-
-			# create temp dir and repository
-			self.dir = tempfile.mkdtemp()
-			self.repo = Repository()
 			
 			# load template
 			loader = TemplateLoader('.')
@@ -274,19 +275,26 @@ Contents file=toc.hhc
 			if os.path.isfile(dest):
 				os.remove(dest)
 			shutil.move(source, dest)			
-			
-			# delete temp dir
-			for root, dirs, files in os.walk(self.dir, topdown=False):
-				for name in files:
-					os.remove(os.path.join(root, name))
-				for name in dirs:
-					os.rmdir(os.path.join(root, name))
-					
 		except Exception, ex:
 			#msg = "\nERROR:\n" + traceback.format_exc()
 			msg = "\nERROR:\n" + str(ex)
 			self.Send(msg)
-	
+			
+		# delete temp dir
+		os.chdir(os.environ['PROGRAMFILES'])
+		if self.keepOutput:
+			self.Send("HTML Workshop files: %s" % (self.dir,))
+		else:
+			try:
+				for root, dirs, files in os.walk(self.dir, topdown=False):
+					for name in files:
+						os.remove(os.path.join(root, name))
+					for name in dirs:
+						os.rmdir(os.path.join(root, name))
+				os.rmdir(self.dir)
+			except Exception, ex:
+				self.Send("\nCould not remove temporary dir: %s\n%s" % (self.dir, str(ex)))
+		
 	def Stop(self):
 		self.stop = True
 		
