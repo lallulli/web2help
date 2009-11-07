@@ -292,9 +292,8 @@ class Web2helpFrame(SDIMainFrame):
 			self.SetModified()
 
 	def OnTestBed(self, evt):
-		t = MyTestBed(self.frame)
+		t = MyTestBed(self.frame, self.project)
 		t.ShowModal()
-		evt.Skip()
 
 	def AskOutputFilename(self):
 		"""Ask and updates the filename (without saving); return None if user cancels, the file name ow"""
