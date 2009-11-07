@@ -25,8 +25,6 @@ return h1.fetchNextSiblings()"""
 		e = ET.Element('project')
 		template = ET.SubElement(e, 'template')
 		template.text = self.template
-		css = ET.SubElement(e, 'css')
-		css.text = self.css
 		name = ET.SubElement(e, 'name')
 		name.text = self.name
 		extractTitle = ET.SubElement(e, 'extractTitle')
@@ -46,7 +44,6 @@ return h1.fetchNextSiblings()"""
 				return v
 	
 		self.template = get('template')
-		self.css = get('css')
 		self.name = get('name')
 		self.extractTitle = get('extractTitle')
 		self.extractContent = get('extractContent')
