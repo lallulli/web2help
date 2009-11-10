@@ -68,17 +68,21 @@ class Grabber(threading.Thread):
 		wx.PostEvent(self.owner, evt)		
 
 	def Load(self, url, text=None):
-		fn = os.path.join(self.dir, self.repo[url])
-		if text is None:
-			if not os.path.isfile(os.path.join(self.tpldir, url)):
-				s = urllib2.urlopen(url)
-			else:
-				s = open(os.path.join(self.tpldir, url), "rb")
-			text = s.read()
-			s.close()
-		f = open(fn, "wb")
-		f.write(text)
-		f.close()
+		try:
+			fn = os.path.join(self.dir, self.repo[url])
+			if text is None:
+				if not os.path.isfile(os.path.join(self.tpldir, url)):
+					s = urllib2.urlopen(url)
+				else:
+					s = open(os.path.join(self.tpldir, url), "rb")
+				text = s.read()
+				s.close()
+			f = open(fn, "wb")
+			f.write(text)
+			f.close()
+		except Exception, exc:
+			msg = "\nWARNING: could not open %s\n%s" % (url, str(exc))
+			self.Send(msg)
 	
 	def TransformUrl(self, baseurl, node, attrib, load=False):
 		try:
@@ -119,12 +123,12 @@ class Grabber(threading.Thread):
 			raw = s.read()
 			s.close()
 			soup = BeautifulSoup.BeautifulSoup(raw)
-			title = str(self.extractTitle(soup.html))
+			title = unicode(self.extractTitle(soup.html))
 			self.tree.SetItemText(k[0], glb.Join(title, u))
 			content = self.extractContent(soup.html)
 			if type(content) != list and type(content) != BeautifulSoup.ResultSet:
 				content = [content]
-			c = "".join([str(x) for x in content])
+			c = "".join([unicode(x) for x in content])
 			next = self.treeList[i + 1][1] if i + 1 < nn else False
 			prev = self.treeList[i - 1][1] if i - 1 >= 0 else False
 			parent = k[2] if k[2] != "" else False
