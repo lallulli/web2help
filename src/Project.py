@@ -17,7 +17,7 @@ class Project(object):
 		self.template = glb.AddPath('template/template.html')
 		self.name = ""
 		self.extractTitle = """return html.h1.string"""
-		self.extractContent = """return = html.find('div', {'id': 'main'})"""
+		self.extractContent = """return html.find('div', {'id': 'main'})"""
 
 	def Serialize(self):
 		e = ET.Element('project')
