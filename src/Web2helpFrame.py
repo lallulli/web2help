@@ -32,7 +32,7 @@ class Web2helpFrame(SDIMainFrame):
 			'w2h',
 			'web2help',
 			glb.AddPath('img/web2help.ico'),
-			"1.0",
+			"1.0.1",
 			"http://www.skeed.it/web2help.html",
 			"Copyright (c) 2009 Luca Allulli - Skeed",
 			"Licensed under the terms and conditions of the GNU General Public License, version 2",
