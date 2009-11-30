@@ -120,9 +120,18 @@ class Grabber(threading.Thread):
 			u = k[1]
 			self.Send("Grabbing %s" % (u,))
 			s = urllib2.urlopen(u)
-			raw = s.read()
+			h = s.headers
+			#ct = False
+			#if "Content-type" in h:
+			#	ct = h["Content-type"]			
+			soup = BeautifulSoup.MinimalSoup(s)
 			s.close()
-			soup = BeautifulSoup.BeautifulSoup(raw)
+			#h = soup.find('meta', {'http-equiv': 'Content-Type'})
+			#if h is not None:
+			#	try:
+			#		ct = h['content']
+			#	except:
+			#		pass
 			title = unicode(self.extractTitle(soup.html))
 			self.tree.SetItemText(k[0], glb.Join(title, u))
 			content = self.extractContent(soup.html)
@@ -133,7 +142,13 @@ class Grabber(threading.Thread):
 			prev = self.treeList[i - 1][1] if i - 1 >= 0 else False
 			parent = k[2] if k[2] != "" else False
 			# apply template
-			text = self.tpl.generate(title=title, content=c, next=next, prev=prev, parent=parent).render('html')
+			text = self.tpl.generate(
+				title=title,
+				content=c,
+				next=next,
+				prev=prev,
+				parent=parent
+			).render('html', encoding='utf-8')
 			# re-parse generated html, and "normalize" urls
 			soup = BeautifulSoup.BeautifulSoup(text)
 			a = soup.findAll('a')
@@ -145,6 +160,10 @@ class Grabber(threading.Thread):
 				self.TransformUrl(u, el, 'src', True)
 			for el in link:
 				self.TransformUrl(u, el, 'href', True)
+			if self.project.grabJavascript:
+				script = soup.findAll('script')
+				for el in script:
+					self.TransformUrl(u, el, 'src', True)				
 			self.Load(u, soup.renderContents())
 			i += 1
 

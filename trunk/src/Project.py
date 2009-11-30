@@ -18,6 +18,7 @@ class Project(object):
 		self.name = ""
 		self.extractTitle = """return html.h1.string"""
 		self.extractContent = """return html.find('div', {'id': 'main'})"""
+		self.grabJavascript = False
 
 	def Serialize(self):
 		e = ET.Element('project')
@@ -29,19 +30,23 @@ class Project(object):
 		extractTitle.text = self.extractTitle
 		extractContent = ET.SubElement(e, 'extractContent')
 		extractContent.text = self.extractContent
+		#grabJavascript = ET.SubElement(e, 'grabJavascript')
+		#grabJavascript.text = str(self.grabJavascript)
 		return e
 			
 	def Unserialize(self, e):
 		e = e.find('project')
 		
 		def get(name):
-			v = e.find(name).text
-			if v is None:
+			n = e.find(name)
+			if n is None:
 				return ""
 			else:
-				return v
+				v = n.text
+				return "" if v is None else v 
 	
 		self.template = get('template')
 		self.name = get('name')
 		self.extractTitle = get('extractTitle')
 		self.extractContent = get('extractContent')
+		#self.grabJavascript = True #bool(get('grabJavascript'))
