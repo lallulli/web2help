@@ -32,13 +32,13 @@ class Web2helpFrame(SDIMainFrame):
 			'w2h',
 			'web2help',
 			glb.AddPath('img/web2help.ico'),
-			"1.0.2",
+			"1.0.3",
 			"http://www.skeed.it/web2help.html",
-			"Copyright (c) 2009 Luca Allulli - Skeed",
+			"Copyright (c) 2009-2010 Luca Allulli - Skeed",
 			"Licensed under the terms and conditions of the GNU General Public License, version 2",
 			"Special thanks to:\n  * The Pyhton programming language (http://www.python.org)\n  * wxWidgets (http://www.wxwidgets.org)\n  * wxPython (http://www.wxpython.org)\n  * Genshi (http://genshi.edgewall.org)\n  * Beautiful Soup (http://www.crummy.com/software/BeautifulSoup)"
 		)
-		
+
 		# Menu
 		self.BindMyMenu()
 		self.keepInputId = xrc.XRCID('keepHtmlWorkshopInputFiles')
@@ -48,20 +48,20 @@ class Web2helpFrame(SDIMainFrame):
 
 		# Tree
 		self.imageList = wx.ImageList(16, 16)
-		self.pageIcon = self.imageList.Add(wx.Bitmap(glb.AddPath('img/page.png')))		
-		self.bookIcon = self.imageList.Add(wx.Bitmap(glb.AddPath('img/book.png')))		
+		self.pageIcon = self.imageList.Add(wx.Bitmap(glb.AddPath('img/page.png')))
+		self.bookIcon = self.imageList.Add(wx.Bitmap(glb.AddPath('img/book.png')))
 		self.tree = wx.TreeCtrl(self.splitter)
 		self.tree.SetImageList(self.imageList)
 		self.tree.Bind(wx.EVT_TREE_ITEM_RIGHT_CLICK, self.OnTreeItemRightClick)
 		self.tree.Bind(wx.EVT_TREE_BEGIN_DRAG, self.OnBeginDrag)
 		self.tree.Bind(wx.EVT_TREE_END_DRAG, self.OnEndDrag)
-		
+
 		self.NEW = 1
 		self.EDIT = 2
 		self.DELETE = 3
 		self.MOVE_UP = 4
 		self.MOVE_DOWN = 5
-		
+
 		# Tree Menu
 		self.menu = wx.Menu()
 		self.menu.Append(self.NEW, "New...")
@@ -74,7 +74,7 @@ class Web2helpFrame(SDIMainFrame):
 		self.frame.Bind(wx.EVT_MENU, self.OnDeleteItem, id=self.DELETE)
 		self.frame.Bind(wx.EVT_MENU, self.OnMoveUp, id=self.MOVE_UP)
 		self.frame.Bind(wx.EVT_MENU, self.OnMoveDown, id=self.MOVE_DOWN)
-		
+
 		# Output pane
 		self.output = wx.stc.StyledTextCtrl(self.splitter)
 		font = wx.Font(
@@ -87,13 +87,13 @@ class Web2helpFrame(SDIMainFrame):
 		self.output.StyleSetFont(wx.stc.STC_STYLE_DEFAULT, font)
 		self.frame.Bind(EVT_TEXT_MESSAGE, self.OnTextMessage)
 		self.frame.Bind(EVT_COMPLETED, self.OnCompileCompleted)
-		
+
 		# Pack and show
 		self.New()
 		self.splitter.SplitVertically(self.tree, self.output)
 		self.frame.Show()
-		
-		
+
+
 	def CopySubtree(self, source, dest, previous=None, append=False, prepend=False):
 		if prepend:
 			di = self.tree.PrependItem(
@@ -110,7 +110,7 @@ class Web2helpFrame(SDIMainFrame):
 				self.tree.GetItemImage(source),
 				self.tree.GetItemImage(source, wx.TreeItemIcon_Selected)
 				#self.tree.GetItemData(source) # Disabled because it causes bad crashes!
-			)		
+			)
 		else:
 			di = self.tree.InsertItem(
 				dest,
@@ -130,7 +130,7 @@ class Web2helpFrame(SDIMainFrame):
 		if self.tree.IsExpanded(source):
 			self.tree.Expand(di)
 		return di
-		
+
 	def MoveSubtree(self, source, dest, previous=None, append=False, prepend=False):
 		# Avoid circular references
 		item = dest
@@ -155,7 +155,7 @@ class Web2helpFrame(SDIMainFrame):
 			self.tree.Expand(self.activeMenuItem)
 			self.tree.SetItemImage(self.activeMenuItem, self.bookIcon)
 		evt.Skip()
-		
+
 	def OnEditItem(self, evt):
 		if self.activeMenuItem != self.tree.GetRootItem():
 			t, u = glb.Split(self.tree.GetItemText(self.activeMenuItem))
@@ -167,7 +167,7 @@ class Web2helpFrame(SDIMainFrame):
 				c = glb.Join("", u)
 				i = self.tree.SetItemText(self.activeMenuItem, c)
 		evt.Skip()
-		
+
 	def OnDeleteItem(self, evt):
 		if self.activeMenuItem != self.tree.GetRootItem():
 			msg = "Removing document and all its children: are you sure?"
@@ -180,22 +180,22 @@ class Web2helpFrame(SDIMainFrame):
 					self.tree.SetItemImage(parent, self.pageIcon)
 			self.activeMenuItem = None
 		evt.Skip()
-		
+
 	def OnMoveUp(self, evt):
 		act = self.activeMenuItem
 		parent = self.tree.GetItemParent(act)
 		prev = self.tree.GetPrevSibling(act)
 		if prev.IsOk():
-			self.SetModified()		
+			self.SetModified()
 			prev = self.tree.GetPrevSibling(prev)
 			if prev.IsOk():
 				self.CopySubtree(act, parent, prev)
 			else:
-				self.CopySubtree(act, parent, prepend=True)	
+				self.CopySubtree(act, parent, prepend=True)
 			self.tree.Delete(act)
 			self.activeMenuItem = None
 		evt.Skip()
-		
+
 	def OnMoveDown(self, evt):
 		act = self.activeMenuItem
 		parent = self.tree.GetItemParent(act)
@@ -206,7 +206,7 @@ class Web2helpFrame(SDIMainFrame):
 			self.tree.Delete(act)
 			self.activeMenuItem = None
 		evt.Skip()
-		
+
 	def OnTreeItemRightClick(self, evt):
 		self.activeMenuItem = evt.GetItem()
 		self.frame.PopupMenu(self.menu)
@@ -216,37 +216,37 @@ class Web2helpFrame(SDIMainFrame):
 		"""Bind a menu item, by xrc name, to a handler"""
 		def Bind(handler, xrcname):
 			self.Bind(wx.EVT_MENU, handler, xrcname)
-			
+
 		Bind(self.OnProjectProperties, 'properties')
 		Bind(self.OnCompile, 'compile')
 		Bind(self.OnTestBed, 'testbed')
 		Bind(self.OnGuide, 'guide')
 
 	def New(self):
-		self.output.ClearAll()	
+		self.output.ClearAll()
 		self.tree.DeleteAllItems()
 		self.tree.AddRoot("Help", self.bookIcon)
 		self.project = Project()
-		
+
 	def Open(self):
-		self.output.ClearAll()	
+		self.output.ClearAll()
 		t = ET.parse(self.document)
 		root = t.getroot()
 		self.project.Unserialize(root)
 		self.TreeUnserialize(root)
-		
+
 	def Save(self):
 		root = ET.Element('root')
 		root.append(self.project.Serialize())
 		root.append(self.TreeSerialize())
 		t = ET.ElementTree(root)
 		t.write(self.document)
-		
+
 	def OnProjectProperties(self, evt):
 		p = MyProperties(self.frame, self.project)
 		if p.ShowModal() == wx.ID_OK:
 			self.SetModified()
-		
+
 	def OnCompile(self, evt):
 		if self.project.name == "":
 			n = self.AskOutputFilename()
@@ -258,22 +258,22 @@ class Web2helpFrame(SDIMainFrame):
 			self.grabber.start()
 			self.SetModified()
 			self.percentTotal = self.tree.GetCount()
-			self.percent = 0		
+			self.percent = 0
 			self.cancelDialog = wx.ProgressDialog(
 				"Compiling...",
 				"Web2help is about to retrieve your help files from the web, and convert them into CHM help files",
 				self.percentTotal,
 				self.frame,
-				wx.PD_CAN_ABORT | wx.PD_AUTO_HIDE 
+				wx.PD_CAN_ABORT | wx.PD_AUTO_HIDE
 			)
 			h = self.cancelDialog.Show()
-					
+
 	def OnCompileCompleted(self, evt):
 		self.cancelDialog.Update(self.percentTotal)
 		self.cancelDialog.Destroy()
 		self.cancelDialog = None
 		evt.Skip()
-		
+
 	def OnTextMessage(self, evt):
 		self.output.AppendText(evt.message + "\n")
 		if self.percent < self.percentTotal - 1:
@@ -282,12 +282,12 @@ class Web2helpFrame(SDIMainFrame):
 		if not cont:
 			self.grabber.Stop()
 		evt.Skip()
-		
+
 	def OnBeginDrag(self, evt):
 		self.dragItem = evt.GetItem()
 		if self.dragItem.IsOk() and self.dragItem != self.tree.GetRootItem():
 			evt.Allow()
-		
+
 	def OnEndDrag(self, evt):
 		dest = evt.GetItem()
 		if dest.IsOk():
@@ -300,7 +300,7 @@ class Web2helpFrame(SDIMainFrame):
 
 	def OnGuide(self, evt):
 		helpfile = os.path.join("help", "web2help.chm")
-		subprocess.Popen("hh " + glb.AddPath(helpfile))		
+		subprocess.Popen("hh " + glb.AddPath(helpfile))
 
 	def AskOutputFilename(self):
 		"""Ask and updates the filename (without saving); return None if user cancels, the file name ow"""
@@ -363,12 +363,12 @@ class Web2helpFrame(SDIMainFrame):
 		while el.IsOk():
 			self.TreeSerializeNode(node, el)
 			el, cookie = self.tree.GetNextChild(item, cookie)
-		
+
 	def TreeSerialize(self):
 		e = ET.Element('toc')
 		self.TreeSerializeNode(e, self.tree.GetRootItem())
 		return e
-		
+
 	def TreeUnserializeChildren(self, e, item):
 		hasChildren = False
 		for n in e:
@@ -379,12 +379,11 @@ class Web2helpFrame(SDIMainFrame):
 			if self.TreeUnserializeChildren(n, i):
 				self.tree.SetItemImage(i, self.bookIcon)
 		return hasChildren
-			
+
 	def TreeUnserialize(self, e):
 		self.tree.DeleteAllItems()
 		rootitem = self.tree.AddRoot("Help", self.bookIcon)
 		toc = e.find('toc')
 		self.TreeUnserializeChildren(toc, rootitem)
 		self.tree.ExpandAll()
-		
-		
+
