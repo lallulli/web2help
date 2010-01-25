@@ -33,27 +33,27 @@ class Repository(object):
 		object.__init__(self)
 		self.i = 1
 		self.d = {}
-		
+
 	def __getitem__(self, s):
 		if s not in self.d:
 			p, e = os.path.splitext(s)
 			self.d[s] = str(self.i) + e
 			self.i += 1
 		return self.d[s]
-		
+
 	def SetItemWithExt(self, s, ext):
 		if s not in self.d:
 			self.d[s] = str(self.i) + ext
 			self.i += 1
 		return self.d[s]
-		
+
 	def __iter__(self):
 		for k in self.d:
 			yield k
-			
+
 	def __in__(self, k):
 		return k in self.d
-		
+
 class Grabber(threading.Thread):
 	def __init__(self, tree, project, owner, keepOutput = False):
 		threading.Thread.__init__(self)
@@ -62,10 +62,10 @@ class Grabber(threading.Thread):
 		self.owner = owner
 		self.stop = False
 		self.keepOutput = keepOutput
-		
+
 	def Send(self, msg):
 		evt = EventTextMessage(message=msg)
-		wx.PostEvent(self.owner, evt)		
+		wx.PostEvent(self.owner, evt)
 
 	def Load(self, url, text=None):
 		try:
@@ -83,7 +83,7 @@ class Grabber(threading.Thread):
 		except Exception, exc:
 			msg = "\nWARNING: could not open %s\n%s" % (url, str(exc))
 			self.Send(msg)
-	
+
 	def TransformUrl(self, baseurl, node, attrib, load=False):
 		try:
 			url = node[attrib]
@@ -96,11 +96,11 @@ class Grabber(threading.Thread):
 		node[attrib] = self.repo[url]
 		if load:
 			self.Load(url)
-	
+
 	def InsertIntoRepository(self):
 		for k in self.treeList:
 			self.repo.SetItemWithExt(k[1], '.htm')
-		
+
 	def GetPrevItem(self, item):
 		prev = self.tree.GetPrevItem(item)
 		if item.IsOk():
@@ -110,8 +110,8 @@ class Grabber(threading.Thread):
 			prev = self.tree.GetNextItem(item)
 			if item.IsOk():
 				return next.GetItemUrl()
-		return False		
-		
+		return False
+
 	def Grab(self):
 		i = 0
 		nn = len(self.treeList)
@@ -121,17 +121,8 @@ class Grabber(threading.Thread):
 			self.Send("Grabbing %s" % (u,))
 			s = urllib2.urlopen(u)
 			h = s.headers
-			#ct = False
-			#if "Content-type" in h:
-			#	ct = h["Content-type"]			
-			soup = BeautifulSoup.MinimalSoup(s)
+			soup = BeautifulSoup.BeautifulSoup(s)
 			s.close()
-			#h = soup.find('meta', {'http-equiv': 'Content-Type'})
-			#if h is not None:
-			#	try:
-			#		ct = h['content']
-			#	except:
-			#		pass
 			title = unicode(self.extractTitle(soup.html))
 			self.tree.SetItemText(k[0], glb.Join(title, u))
 			content = self.extractContent(soup.html)
@@ -163,11 +154,11 @@ class Grabber(threading.Thread):
 			if self.project.grabJavascript:
 				script = soup.findAll('script')
 				for el in script:
-					self.TransformUrl(u, el, 'src', True)				
+					self.TransformUrl(u, el, 'src', True)
 			self.Load(u, soup.renderContents())
 			i += 1
 
-		
+
 	def GenerateTocItem(self, item, e):
 		t, u = glb.Split(self.tree.GetItemText(item))
 		li = tag.li
@@ -184,7 +175,7 @@ class Grabber(threading.Thread):
 				item,
 				lambda i: self.GenerateTocItem(i, ul)
 			)
-			
+
 	def GenerateTreeList(self, item):
 		t, u = glb.Split(self.tree.GetItemText(item))
 		p = self.tree.GetItemParent(item)
@@ -205,7 +196,7 @@ class Grabber(threading.Thread):
 			self.CheckStop()
 			pos = what(el)
 			el, cookie = self.tree.GetNextChild(item, cookie)
-			
+
 	def GenerateToc(self):
 		self.tocFile = os.path.join(self.dir, "toc.hhc")
 		loader = TemplateLoader('.')
@@ -218,7 +209,7 @@ class Grabber(threading.Thread):
 		f = open(self.tocFile, "w")
 		f.write(toctpl.generate(list=ul).render('html'))
 		f.close()
-		
+
 	def GenerateProjectFile(self):
 		self.projFile = os.path.join(self.dir, "project.hhp")
 		f = open(self.projFile, "w")
@@ -239,49 +230,49 @@ Contents file=toc.hhc
 		f.write(i)
 		for k in self.treeList:
 			f.write(self.repo[k[1]] + "\n")
-		f.close()		
-		
+		f.close()
+
 	def Compile(self):
 		try:
-		
+
 			# create temp dir and repository
 			self.dir = tempfile.mkdtemp()
 			self.repo = Repository()
-		
+
 			self.path, self.name = os.path.split(self.project.name)
-		
+
 			# define extracting methods
 			m = "def extractTitle(html):\n"
 			for l in self.project.extractTitle.splitlines():
 				m += "\t" + l + "\n"
 			exec m
 			self.extractTitle = extractTitle
-			
+
 			m = "def extractContent(html):\n"
 			for l in self.project.extractContent.splitlines():
 				m += "\t" + l + "\n"
 			exec m
 			self.extractContent = extractContent
-			
+
 			# load template
 			loader = TemplateLoader('.')
 			self.tpl = loader.load(self.project.template)
 			self.tpldir, f = os.path.split(self.project.template)
-						
+
 			# generate tree list
 			self.treeList = []
 			self.DoWithChildren(self.tree.GetRootItem(), self.GenerateTreeList)
-			
+
 			# insert urls into repository
 			self.InsertIntoRepository()
-			
+
 			# grab documents
 			self.Grab()
-			
+
 			# generate project files
 			self.GenerateToc()
 			self.GenerateProjectFile()
-			
+
 			# launch help compiler
 			self.Send("\nLaunching MS Help Compiler...")
 			hc = os.path.join(os.environ['PROGRAMFILES'], "HTML Help Workshop\\hhc.exe")
@@ -290,19 +281,19 @@ Contents file=toc.hhc
 			for l in proc.stdout:
 				self.CheckStop()
 				self.Send(l.strip("\n"))
-				
+
 			# copy output file in project dir
 			#d, f = os.path.split(self.project.)
 			source = os.path.join(self.dir, self.name)
 			dest = os.path.join(self.path, self.name)
 			if os.path.isfile(dest):
 				os.remove(dest)
-			shutil.move(source, dest)			
+			shutil.move(source, dest)
 		except Exception, ex:
 			#msg = "\nERROR:\n" + traceback.format_exc()
 			msg = "\nERROR:\n" + str(ex)
 			self.Send(msg)
-			
+
 		# delete temp dir
 		os.chdir(os.environ['PROGRAMFILES'])
 		if self.keepOutput:
@@ -317,16 +308,16 @@ Contents file=toc.hhc
 				os.rmdir(self.dir)
 			except Exception, ex:
 				self.Send("\nCould not remove temporary dir: %s\n%s" % (self.dir, str(ex)))
-		
+
 	def Stop(self):
 		self.stop = True
-		
+
 	def CheckStop(self):
 		if self.stop:
 			raise Exception("Stopped")
-		
+
 	def run(self):
 		self.Compile()
 		evt = EventCompleted()
-		wx.PostEvent(self.owner, evt)		
-	
+		wx.PostEvent(self.owner, evt)
+
