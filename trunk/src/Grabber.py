@@ -207,7 +207,7 @@ class Grabber(threading.Thread):
 			lambda i: self.GenerateTocItem(i, ul)
 		)
 		f = open(self.tocFile, "w")
-		f.write(toctpl.generate(list=ul).render('html'))
+		f.write(toctpl.generate(list=ul).render('html').decode('utf-8').encode('utf-16'))
 		f.close()
 
 	def GenerateProjectFile(self):
